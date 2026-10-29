@@ -1,0 +1,9 @@
+!dist/**
+**/*.map
+**/*.ts
+.github/**
+.vscode/**
+CHANGELOG.md
+node_modules/**
+src/**
+tsconfig.json

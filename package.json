@@ -1,0 +1,222 @@
+{
+  "name": "birt-rptdesign",
+  "displayName": "BIRT Report Design (.rptdesign)",
+  "description": "Syntax highlighting and JavaScript linting for script blocks embedded in BIRT report design files.",
+  "version": "0.1.0",
+  "publisher": "plong",
+  "author": {
+    "name": "Long Phan",
+    "email": "longpv.se@gmail.com",
+    "url": "https://github.com/PhanVinhLong"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/PhanVinhLong/birt-vscode-extension.git"
+  },
+  "bugs": {
+    "url": "https://github.com/PhanVinhLong/birt-vscode-extension/issues"
+  },
+  "homepage": "https://github.com/PhanVinhLong/birt-vscode-extension#readme",
+  "keywords": [
+    "birt",
+    "rptdesign",
+    "report",
+    "eclipse birt",
+    "javascript",
+    "linter"
+  ],
+  "qna": false,
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters"
+  ],
+  "main": "./dist/extension.js",
+  "activationEvents": [],
+  "contributes": {
+    "languages": [
+      {
+        "id": "birt-rptdesign",
+        "aliases": [
+          "BIRT Report Design",
+          "rptdesign"
+        ],
+        "extensions": [
+          ".rptdesign",
+          ".rpttemplate",
+          ".rptlibrary",
+          ".rptdocument"
+        ],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "birt-rptdesign",
+        "scopeName": "text.xml.rptdesign",
+        "path": "./syntaxes/rptdesign.tmLanguage.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.javascript": "javascript",
+          "meta.embedded.line.javascript": "javascript"
+        }
+      },
+      {
+        "scopeName": "rptdesign.entities.injection",
+        "path": "./syntaxes/rptdesign-entities.injection.json",
+        "injectTo": [
+          "text.xml.rptdesign"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "birtRptdesign.lintWorkspace",
+        "title": "BIRT: Lint all report designs in workspace",
+        "category": "BIRT"
+      },
+      {
+        "command": "birtRptdesign.openScriptInJsEditor",
+        "title": "BIRT: Open script block in a JavaScript editor",
+        "category": "BIRT"
+      },
+      {
+        "command": "birtRptdesign.encodeEntities",
+        "title": "BIRT: Encode script characters the way BIRT Designer does",
+        "category": "BIRT"
+      }
+    ],
+    "configuration": {
+      "title": "BIRT Report Design",
+      "properties": {
+        "birtRptdesign.lint.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "Report JavaScript problems found in <method> and <expression> blocks."
+        },
+        "birtRptdesign.lint.ecmaVersion": {
+          "type": [
+            "number",
+            "string"
+          ],
+          "default": 2020,
+          "enum": [
+            5,
+            2015,
+            2017,
+            2020,
+            2022,
+            "latest"
+          ],
+          "description": "ECMAScript version used to parse embedded scripts. Keep this permissive and use the Rhino compatibility check to flag constructs your BIRT engine cannot run."
+        },
+        "birtRptdesign.lint.rhinoCompatibility": {
+          "type": "boolean",
+          "default": true,
+          "description": "Warn about modern JavaScript constructs that BIRT's Rhino script engine may not support."
+        },
+        "birtRptdesign.lint.rhinoUnsupported": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "arrow-function",
+              "template-literal",
+              "class",
+              "spread",
+              "destructuring",
+              "default-parameter",
+              "for-of",
+              "async-await",
+              "generator",
+              "optional-chaining",
+              "nullish-coalescing",
+              "exponent-operator",
+              "let-const"
+            ]
+          },
+          "default": [
+            "arrow-function",
+            "template-literal",
+            "class",
+            "spread",
+            "destructuring",
+            "default-parameter",
+            "for-of",
+            "async-await",
+            "generator",
+            "optional-chaining",
+            "nullish-coalescing",
+            "exponent-operator"
+          ],
+          "description": "Which constructs the Rhino compatibility check reports. Tune this to the BIRT version you deploy to."
+        },
+        "birtRptdesign.lint.undefinedGlobals": {
+          "type": "boolean",
+          "default": false,
+          "description": "Warn when a script reads an identifier that is never declared or assigned anywhere in the same file and is not a known BIRT or JavaScript global. Useful for catching typos; may be noisy if scripts rely on globals set by other reports or libraries."
+        },
+        "birtRptdesign.lint.extraGlobals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Additional global names to treat as defined by the undefined-globals check."
+        },
+        "birtRptdesign.lint.delay": {
+          "type": "number",
+          "default": 300,
+          "description": "Milliseconds to wait after a change before re-linting."
+        },
+        "birtRptdesign.lint.globalScope": {
+          "type": "string",
+          "enum": [
+            "workspace",
+            "nearest"
+          ],
+          "default": "workspace",
+          "enumDescriptions": [
+            "Pool script libraries from the whole workspace, matching the single global scope BIRT's engine builds.",
+            "Only use script libraries under the closest ancestor directory. Catches more typos, but flags cross-region calls."
+          ],
+          "description": "How the undefined-globals check resolves functions defined in shared script libraries."
+        },
+        "birtRptdesign.lint.globalScriptDirs": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [
+            "resources/birt/scripts",
+            "resources/birt/libraries"
+          ],
+          "description": "Directories (relative to a workspace folder) holding .js and .rptlibrary files whose top-level declarations count as globals."
+        },
+        "birtRptdesign.encodeEntitiesOnSave": {
+          "type": "boolean",
+          "default": true,
+          "markdownDescription": "On save, escape `&` as `&amp;` inside `<method>` and `<text-property>` CDATA, matching how BIRT Designer writes report files. `<`, `>` and `\"` are left alone, because BIRT does not escape those inside CDATA."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --target=node18 --minify && esbuild src/cli.ts --bundle --outfile=dist/cli.js --format=cjs --platform=node --target=node18",
+    "watch": "npm run build -- --sourcemap --no-minify --watch",
+    "typecheck": "tsc --noEmit",
+    "package": "npm run build && vsce package --no-dependencies"
+  },
+  "dependencies": {
+    "acorn": "^8.19.0",
+    "acorn-walk": "^8.3.5"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "@types/vscode": "^1.85.0",
+    "esbuild": "^0.24.0",
+    "typescript": "^5.5.0"
+  }
+}

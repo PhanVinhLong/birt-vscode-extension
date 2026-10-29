@@ -1,0 +1,108 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "BIRT Report Design",
+  "scopeName": "text.xml.rptdesign",
+  "patterns": [
+    { "include": "#script-method" },
+    { "include": "#js-expression" },
+    { "include": "#value-of" },
+    { "include": "text.xml" }
+  ],
+  "repository": {
+    "script-method": {
+      "name": "meta.tag.script.method.rptdesign",
+      "begin": "(<)(method)(?=[\\s>])",
+      "beginCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.xml" },
+        "2": { "name": "entity.name.tag.localname.xml" }
+      },
+      "end": "(</)(method)\\s*(>)",
+      "endCaptures": {
+        "1": { "name": "punctuation.definition.tag.begin.xml" },
+        "2": { "name": "entity.name.tag.localname.xml" },
+        "3": { "name": "punctuation.definition.tag.end.xml" }
+      },
+      "patterns": [
+        { "include": "#tag-attribute" },
+        { "match": "/?>", "name": "punctuation.definition.tag.end.xml" },
+        { "include": "#cdata-javascript" },
+        { "include": "#xml-comment" }
+      ]
+    },
+
+    "cdata-javascript": {
+      "name": "meta.embedded.cdata.rptdesign",
+      "begin": "(<!\\[CDATA\\[)",
+      "beginCaptures": { "1": { "name": "punctuation.definition.cdata.begin.xml" } },
+      "end": "(\\]\\]>)",
+      "endCaptures": { "1": { "name": "punctuation.definition.cdata.end.xml" } },
+      "contentName": "meta.embedded.block.javascript",
+      "patterns": [
+        { "include": "#xml-entity" },
+        { "include": "source.js" }
+      ]
+    },
+
+    "js-expression": {
+      "match": "(<)(expression)(?![^>]*type=\"constant\")((?:\\s+[a-zA-Z_:][\\w:.-]*=\"[^\"]*\")*\\s*)(>)([^<]*)(</)(expression)(\\s*>)",
+      "name": "meta.tag.script.expression.rptdesign",
+      "captures": {
+        "1": { "name": "punctuation.definition.tag.begin.xml" },
+        "2": { "name": "entity.name.tag.localname.xml" },
+        "3": { "patterns": [{ "include": "#tag-attribute" }] },
+        "4": { "name": "punctuation.definition.tag.end.xml" },
+        "5": {
+          "name": "meta.embedded.line.javascript",
+          "patterns": [
+            { "include": "#xml-entity" },
+            { "include": "source.js" }
+          ]
+        },
+        "6": { "name": "punctuation.definition.tag.begin.xml" },
+        "7": { "name": "entity.name.tag.localname.xml" },
+        "8": { "name": "punctuation.definition.tag.end.xml" }
+      }
+    },
+
+    "value-of": {
+      "match": "(<)(value-of)((?:\\s+[a-zA-Z_:][\\w:.-]*=\"[^\"]*\")*\\s*)(>)([^<]*)(</)(value-of)(\\s*>)",
+      "name": "meta.tag.script.value-of.rptdesign",
+      "captures": {
+        "1": { "name": "punctuation.definition.tag.begin.xml" },
+        "2": { "name": "entity.name.tag.localname.xml" },
+        "3": { "patterns": [{ "include": "#tag-attribute" }] },
+        "4": { "name": "punctuation.definition.tag.end.xml" },
+        "5": {
+          "name": "meta.embedded.line.javascript",
+          "patterns": [
+            { "include": "#xml-entity" },
+            { "include": "source.js" }
+          ]
+        },
+        "6": { "name": "punctuation.definition.tag.begin.xml" },
+        "7": { "name": "entity.name.tag.localname.xml" },
+        "8": { "name": "punctuation.definition.tag.end.xml" }
+      }
+    },
+
+    "tag-attribute": {
+      "match": "([a-zA-Z_:][\\w:.-]*)(=)(\"[^\"]*\"|'[^']*')",
+      "captures": {
+        "1": { "name": "entity.other.attribute-name.localname.xml" },
+        "2": { "name": "punctuation.separator.key-value.xml" },
+        "3": { "name": "string.quoted.double.xml" }
+      }
+    },
+
+    "xml-comment": {
+      "name": "comment.block.xml",
+      "begin": "<!--",
+      "end": "-->"
+    },
+
+    "xml-entity": {
+      "name": "constant.character.entity.xml",
+      "match": "&(?:[a-zA-Z][a-zA-Z0-9]*|#[0-9]+|#x[0-9a-fA-F]+);"
+    }
+  }
+}
