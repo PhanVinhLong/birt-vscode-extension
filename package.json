@@ -2,6 +2,11 @@
   "name": "birt-rptdesign",
   "displayName": "BIRT Report Design (.rptdesign)",
   "description": "Syntax highlighting and JavaScript linting for script blocks embedded in BIRT report design files.",
+  "icon": "icon.png",
+  "galleryBanner": {
+    "color": "#f7df1e",
+    "theme": "light"
+  },
   "version": "0.1.0",
   "publisher": "plong",
   "author": {
